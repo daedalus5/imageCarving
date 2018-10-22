@@ -35,7 +35,7 @@ def main():
     axes[1].set_title('Image Out : [' + str(img_out.shape[0]) + ', ' + str(img_out.shape[1]) + ']')
 
     fig.tight_layout()
-    fig.savefig("wall_carved.jpg")
+    fig.savefig("landscape.jpg")
 
 if __name__ == "__main__":
     main()
