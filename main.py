@@ -21,10 +21,20 @@ def main():
     im_path = os.path.join(folder, im_name)
     img_in = np.array(Image.open(im_path).convert('RGB')) 
 
-    img_out, T = carv(img_in, 5, 5)
-    print(T)
-    plt.imshow(img_out / 255.0)
-    plt.show()
+    img_out, T = carv(img_in, 5, 20)
+
+    fig, axes = plt.subplots(1, 2, gridspec_kw = {'width_ratios':[img_in.shape[1], img_out.shape[1]]})
+    axes[0].imshow(img_in / 255.0)
+    axes[0].axis('off')
+    axes[0].set_title('Image In : [' + str(img_in.shape[0]) + ', ' + str(img_in.shape[1]) + ']')
+
+    axes[1].imshow(img_out / 255.0)
+    axes[1].axis('off')
+    axes[1].set_title('Image Out : [' + str(img_out.shape[0]) + ', ' + str(img_out.shape[1]) + ']')
+
+    #plt.show()
+    fig.tight_layout()
+    fig.savefig("wall_carved.jpg")
 
 if __name__ == "__main__":
     main()
