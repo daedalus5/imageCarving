@@ -25,10 +25,12 @@ from cumMinEngHor import cumMinEngHor
 from rmHorSeam import rmHorSeam
 from rmVerSeam import rmVerSeam
 from genEngMap import genEngMap
+import imageio
 
 class Img:
   def __init__(self, I, r, c):
-    self.I = np.array((r, c, 3))
+    #self.I = np.array((r, c, 3))
+    self.I = np.zeros((r, c, 3))
     self.I = I
 
 def carv(I, nr, nc):
@@ -46,7 +48,8 @@ def carv(I, nr, nc):
     I_copy, E = rmVerSeam(I_copy, Mx, Tbx)
     E_total += E
     T[0, j] = E_total
-    img_array[0, j] = Img(I_copy, I_copy.shape[0], I_copy.shape[1])
+    #img_array[0, j] = Img(I_copy, I_copy.shape[0], I_copy.shape[1])
+    img_array[0, j] = Img(I_copy, I.shape[0], I.shape[1])
 
   # next fill in left column of T and img_array
   E_total = 0
@@ -57,7 +60,8 @@ def carv(I, nr, nc):
     I_copy, E = rmHorSeam(I_copy, My, Tby)
     E_total += E
     T[i, 0] = E_total
-    img_array[i, 0] = Img(I_copy, I_copy.shape[0], I_copy.shape[1])
+    #img_array[i, 0] = Img(I_copy, I_copy.shape[0], I_copy.shape[1])
+    img_array[i, 0] = Img(I_copy, I.shape[0], I.shape[1])
 
   # fill in all remaining elements by comparing above and to the left
   for i in range(1, nr + 1, 1):
@@ -76,11 +80,45 @@ def carv(I, nr, nc):
       # to determine what the mimimal cost of generating this sub-image is
       if(E_up < E_left):
         T[i, j] = T[i - 1, j] + E_up
-        img_array[i, j] = Img(I_up, I_up.shape[0], I_up.shape[1])
+        #img_array[i, j] = Img(I_up, I_up.shape[0], I_up.shape[1])
+        img_array[i, j] = Img(I_up, I.shape[0], I.shape[1])
       else:
         T[i, j] = T[i, j - 1] + E_left
-        img_array[i, j] = Img(I_left, I_left.shape[0], I_left.shape[1])
+        #img_array[i, j] = Img(I_left, I_left.shape[0], I_left.shape[1])
+        img_array[i, j] = Img(I_left, I.shape[0], I.shape[1])
 
   Ic = img_array[nr, nc].I
 
+  # --uncomment-- for making a gif
+  '''
+  gif_images = np.empty(nr + nc + 1, dtype = Img)
+  gif_images[0] = img_array[nr, nc]
+
+  idx = 1
+  i = nr
+  j = nc
+  while(i > 0 or j > 0):
+    # look left
+    if(T[i - 1, j] < T[i, j - 1]):
+      gif_images[idx] = img_array[i - 1, j]
+      i -= 1
+    # look up
+    else:
+      gif_images[idx] = img_array[i, j - 1]
+      j -= 1
+    idx += 1
+
+  gif_images[nr + nc] = img_array[0, 0]
+
+  res_list = []
+  k = nr + nc
+  while k >= 0:
+    res_list.append(gif_images[k].I[:, :, :])
+    k -= 1
+
+  # generate gif file
+  imageio.mimsave('./eval_testimg.gif', res_list)
+
+  '''
+  
   return Ic, T

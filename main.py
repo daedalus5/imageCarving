@@ -16,12 +16,14 @@ test_energy = np.array([
 
 def main():
     folder = ""
-    im_name = "wall.jpg"
+    im_name = "landscape.jpg"
 
     im_path = os.path.join(folder, im_name)
     img_in = np.array(Image.open(im_path).convert('RGB')) 
 
-    img_out, T = carv(img_in, 5, 20)
+    img_out, T = carv(img_in, 30, 30)
+
+    # --uncomment-- for making a single image
 
     fig, axes = plt.subplots(1, 2, gridspec_kw = {'width_ratios':[img_in.shape[1], img_out.shape[1]]})
     axes[0].imshow(img_in / 255.0)
@@ -32,7 +34,6 @@ def main():
     axes[1].axis('off')
     axes[1].set_title('Image Out : [' + str(img_out.shape[0]) + ', ' + str(img_out.shape[1]) + ']')
 
-    #plt.show()
     fig.tight_layout()
     fig.savefig("wall_carved.jpg")
 
